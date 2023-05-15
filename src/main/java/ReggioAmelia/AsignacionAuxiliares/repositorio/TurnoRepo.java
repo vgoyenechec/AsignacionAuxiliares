@@ -3,6 +3,7 @@ package ReggioAmelia.AsignacionAuxiliares.repositorio;
 
 import ReggioAmelia.AsignacionAuxiliares.modelo.Turno;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -19,5 +20,8 @@ public interface TurnoRepo extends JpaRepository<Turno, LocalDate> {
     void deleteAll();
 
     List<Turno> findAllByOrderByTurnoIdAsc();
+
+    @Query("SELECT t FROM Turno t WHERE t.turnoId > CURRENT_DATE")
+    List<Turno> findTurnoPendientes();
 
 }

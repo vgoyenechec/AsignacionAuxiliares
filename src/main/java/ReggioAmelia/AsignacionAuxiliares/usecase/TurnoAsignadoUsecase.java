@@ -1,5 +1,7 @@
 package ReggioAmelia.AsignacionAuxiliares.usecase;
 
+import ReggioAmelia.AsignacionAuxiliares.dto.TurnoAsignadoDTO;
+import ReggioAmelia.AsignacionAuxiliares.mapper.TurnoAsignadoMapper;
 import ReggioAmelia.AsignacionAuxiliares.modelo.Auxiliar;
 import ReggioAmelia.AsignacionAuxiliares.modelo.Turno;
 import ReggioAmelia.AsignacionAuxiliares.modelo.TurnoAsignado;
@@ -26,37 +28,49 @@ public class TurnoAsignadoUsecase {
     private TurnoUsecase turnoUsecase;
     private static final Gson gson = new Gson();
 
-    public List<TurnoAsignado> asignarTurnos(){
+    public List<TurnoAsignadoDTO> asignarTurnos(int auxIni, boolean asignar) {
         List<Auxiliar> auxiliares = auxiliarUsecase.obtenerListadoAuxiliares();
-        List<Turno> turnos = turnoUsecase.obtenerListadoTurnos();
+        List<Turno> turnos = asignar ? turnoUsecase.obtenerListadoTurnos() : turnoUsecase.obtenerListadoTurnosPendientes();
         List<TurnoAsignado> asignados = new ArrayList<>();
         int auxCont = auxiliares.size();
         int turnoCont = turnos.size();
 
         for (int i = 0; i < turnoCont; i++) {
-            Auxiliar auxiliar = auxiliares.get(i % auxCont);
+            Auxiliar auxiliar = auxiliares.get((i + auxIni) % auxCont);
             Turno turno = turnos.get(i);
             TurnoAsignado asignado = new TurnoAsignado();
             asignado.setTurno(turno);
             asignado.setDocenteAuxiliar(auxiliar);
             asignados.add(asignado);
         }
-        return turnoAsignadoRepo.saveAll(asignados);
+        return TurnoAsignadoMapper.INSTANCE.entitiesToDtos(turnoAsignadoRepo.saveAll(asignados));
     }
 
-
-    private TurnoAsignado asignarTurno(TurnoAsignado turnoAsignado){
+    private TurnoAsignadoDTO asignarTurno(TurnoAsignado turnoAsignado){
         turnoAsignadoRepo.save(turnoAsignado);
-        log.info("Turno asignado: "+gson.toJson(turnoAsignado));
-        return turnoAsignado;
+        TurnoAsignadoDTO dto = TurnoAsignadoMapper.INSTANCE.toDto(turnoAsignado);
+        log.info("Turno asignado: "+gson.toJson(dto));
+        return dto;
     }
 
     public void updateTurnoAsignado(Long id, Auxiliar auxiliar){
         turnoAsignadoRepo.updateDocenteAuxiliarById(id, auxiliar);
     }
 
-    public List<TurnoAsignado> obtenerListadoTurnosAsignados(){
-        return turnoAsignadoRepo.findAll();
+    public List<TurnoAsignadoDTO> obtenerListadoTurnosAsignados(){
+        return TurnoAsignadoMapper.INSTANCE.entitiesToDtos(turnoAsignadoRepo.findAll());
+    }
+
+    public List<TurnoAsignadoDTO> obtenerTurnosPendientes(){
+        return TurnoAsignadoMapper.INSTANCE.entitiesToDtos(turnoAsignadoRepo.findTurnosPendientes());
+    }
+
+    public List<TurnoAsignadoDTO> reasignarTurnos(){
+        TurnoAsignado ultimoTurno = turnoAsignadoRepo.findUltimoTurnoTerminado();
+        Auxiliar ultimoAuxiliar = ultimoTurno.getDocenteAuxiliar();
+        turnoAsignadoRepo.deleteTurnosPendientes();
+        return asignarTurnos((ultimoAuxiliar.getId().intValue()), false);
+
     }
 
 

@@ -13,6 +13,6 @@ public interface AuxiliarRepo extends JpaRepository<Auxiliar,Long> {
     Auxiliar save(Auxiliar entity);
     Auxiliar findByCedula(String id);
     void deleteByCedula(String id);
-    List<Auxiliar> findAllByOrderByNombreAsc();
+    List<Auxiliar> findAllByOrderById();
 
 }

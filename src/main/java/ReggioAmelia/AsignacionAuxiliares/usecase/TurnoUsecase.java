@@ -51,4 +51,8 @@ public class TurnoUsecase {
     public List<Turno> obtenerListadoTurnos(){
         return turnoRepo.findAllByOrderByTurnoIdAsc();
     }
+
+    public List<Turno> obtenerListadoTurnosPendientes(){
+        return turnoRepo.findTurnoPendientes();
+    }
 }

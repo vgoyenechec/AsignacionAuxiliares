@@ -2,6 +2,7 @@ package ReggioAmelia.AsignacionAuxiliares.controller;
 
 import ReggioAmelia.AsignacionAuxiliares.dto.AuxiliarDTO;
 import ReggioAmelia.AsignacionAuxiliares.dto.EliminarAuxReqDTO;
+import ReggioAmelia.AsignacionAuxiliares.dto.TurnoAsignadoDTO;
 import ReggioAmelia.AsignacionAuxiliares.dto.TurnoDTO;
 import ReggioAmelia.AsignacionAuxiliares.modelo.Auxiliar;
 import ReggioAmelia.AsignacionAuxiliares.modelo.Turno;
@@ -78,8 +79,23 @@ public class AsignacionController {
     }
 
     @PostMapping("/asignar-turnos")
-    public List<TurnoAsignado> asignarTurnos(){
-        return turnoAsignadoUsecase.asignarTurnos();
+    public List<TurnoAsignadoDTO> asignarTurnos(){
+        return turnoAsignadoUsecase.asignarTurnos(0, true);
+    }
+
+    @PostMapping("/reasignar-turnos")
+    public List<TurnoAsignadoDTO> reasignarTurnos(){
+        return turnoAsignadoUsecase.reasignarTurnos();
+    }
+
+    @GetMapping("/turnos-asignados")
+    public List<TurnoAsignadoDTO> obtenerTurnosAsignados(){
+        return turnoAsignadoUsecase.obtenerListadoTurnosAsignados();
+    }
+
+    @GetMapping("/turnos-pendientes")
+    public List<TurnoAsignadoDTO> obtenerTurnosPendientes(){
+        return turnoAsignadoUsecase.obtenerTurnosPendientes();
     }
 
     @GetMapping("/obtener-sabados")

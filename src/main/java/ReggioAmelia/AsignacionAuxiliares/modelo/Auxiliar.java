@@ -2,6 +2,9 @@ package ReggioAmelia.AsignacionAuxiliares.modelo;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,4 +30,8 @@ public class Auxiliar {
 
     @Column(name = "taux_sede", nullable = false)
     private String sede;
+
+//    @JsonIgnore
+    @OneToMany(mappedBy = "docenteAuxiliar", cascade = CascadeType.REMOVE)
+    private List<TurnoAsignado> turnoAsignados;
 }

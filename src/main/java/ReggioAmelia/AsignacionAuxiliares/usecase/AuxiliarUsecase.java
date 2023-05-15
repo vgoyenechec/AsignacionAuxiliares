@@ -30,12 +30,11 @@ public class AuxiliarUsecase {
 
     public void deleteAuxiliar(String cedula){
         Auxiliar auxiliar = auxiliarRepo.findByCedula(cedula);
-        log.info("Auxiliar eliminado: "+ gson.toJson(auxiliar));
         auxiliarRepo.deleteByCedula(cedula);
     }
 
     public List<Auxiliar> obtenerListadoAuxiliares(){
-        return auxiliarRepo.findAllByOrderByNombreAsc();
+        return auxiliarRepo.findAllByOrderById();
     }
 
 
